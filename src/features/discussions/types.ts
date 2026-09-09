@@ -1,0 +1,2 @@
+export interface DiscussionReply { id: string; messageId: string; authorId: string; authorName: string; authorRole?: string | null; message: string; attachments: string[]; createdAt: string; updatedAt: string; }
+export interface DiscussionMessage { id: string; projectId: string; authorId: string; authorName: string; authorRole?: string | null; message: string; attachments: string[]; replies: DiscussionReply[]; isDeleted: boolean; isSystemMessage: boolean; createdAt: string; updatedAt: string; }

@@ -1,0 +1,15 @@
+node_modules
+dist
+.env
+.env.*
+
+# TypeScript/Vite generated metadata
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
+# Local tooling and logs
+.vscode/
+.idea/
+*.log
+coverage/

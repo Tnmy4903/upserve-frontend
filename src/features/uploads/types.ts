@@ -1,0 +1,1 @@
+export interface ProjectUpload { id: string; userId: string; projectId: string; fileName: string; storedFileName: string; fileSize: number; contentType?: string | null; extension: string; uploaderRole?: string | null; clientVisible: boolean; uploadedAt: string; }

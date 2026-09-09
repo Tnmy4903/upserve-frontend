@@ -1,0 +1,82 @@
+.metric-group { margin-top: 1.25rem; }
+.metric-group h3, .record-group h3 { margin: .5rem 0; color: #53655a; font-size: .9rem; text-transform: capitalize; }
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .75rem; }
+.metric { display: flex; flex-direction: column; gap: .35rem; padding: .9rem; background: #f8fafc; border: 1px solid #eaecf0; border-radius: 9px; }
+.metric span { color: #718078; font-size: .78rem; text-transform: capitalize; }
+.metric strong { color: #172033; font-size: 1.25rem; word-break: break-word; }
+.admin-overview-page > h1, .manage-users-page > h1 { margin-bottom: 1.5rem; }
+.admin-overview-page > .admin-panel { padding: 1.75rem; }
+.admin-overview-page > .admin-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-top: 1rem; }
+.admin-overview-page .admin-panel h2, .manage-users-page .form-card h2 { margin-top: 0; letter-spacing: -.03em; }
+.admin-overview-page .admin-panel > .section-heading { margin-bottom: 1rem; }
+.admin-overview-page .activity-list { max-height: none; }
+.manage-users-page > .admin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.manage-users-page > .admin-grid .form-card { display: flex; flex-direction: column; }
+.manage-users-page > .admin-grid .form-card button { margin-top: 1rem; }
+.manage-users-page .status-form { width: 100%; max-width: none; }
+.record-groups, .record-list { display: grid; gap: 1rem; }
+.record-list { gap: .6rem; }
+.record { display: grid; gap: .25rem; padding: .8rem; background: #f1f4f0; border: 1px solid #e2e7e1; border-radius: 8px; font-size: .85rem; }
+.record span { color: #475467; }
+.record b { color: #172033; }
+.activity-list { display: grid; gap: .6rem; max-height: 420px; overflow: auto; }
+.admin-panel { min-width: 0; }
+.content-list { display: grid; gap: .5rem; }
+.content-list h3 { margin: 1rem 0 .25rem; }
+.content-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .75rem; background: #f1f4f0; border: 1px solid #e2e7e1; border-radius: 8px; }
+.content-row span { display: grid; gap: .2rem; }
+.content-row small { color: #667085; }
+
+.record-directory-page { max-width: 1600px; margin: 0 auto; }
+.record-directory-toolbar { display: flex; align-items: end; gap: 1.5rem; margin: 1.25rem 0; padding: 1rem 1.2rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: #f8fbf8; }
+.record-directory-toolbar label { flex: 0 1 420px; margin: 0; }
+.record-directory-toolbar input { margin-top: .4rem; }
+.record-directory-grid { display: grid; gap: 1rem; }
+.directory-section { min-width: 0; padding: 1.2rem; }
+.directory-section .section-heading { margin-bottom: .85rem; }
+.directory-section h2 { margin: 0; }
+.directory-table { min-width: 980px; }
+.directory-table th, .directory-table td { padding: .7rem .8rem; vertical-align: top; white-space: nowrap; }
+.directory-table th { text-transform: capitalize; }
+.directory-table code { display: inline-block; max-width: 180px; color: var(--color-primary); font-size: .72rem; overflow-wrap: anywhere; white-space: normal; }
+.directory-identity { display: inline-block; max-width: 230px; white-space: normal; }
+.directory-empty { padding: 1rem; box-shadow: none; }
+
+@media (max-width: 900px) {
+  .admin-overview-page > .admin-grid, .manage-users-page > .admin-grid { grid-template-columns: 1fr; }
+  .record-directory-toolbar { display: block; }
+  .record-directory-toolbar .muted { display: block; margin-top: .7rem; }
+}
+@media (max-width: 767px) {
+  .directory-section .table-wrap { overflow: visible; border: 0; }
+  .directory-table { min-width: 0; }
+  .directory-table, .directory-table thead, .directory-table tbody, .directory-table tr, .directory-table td { display: block; width: 100%; }
+  .directory-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .directory-table tr { margin-bottom: 12px; padding: 12px 16px; border: 1px solid var(--fc-border); border-radius: 10px; background: var(--fc-surface); }
+  .directory-table td { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border: 0; white-space: normal; text-align: right; overflow-wrap: anywhere; }
+  .directory-table td::before { color: var(--fc-muted); font-size: 12px; font-weight: 500; text-align: left; }
+  .directory-table td:first-child::before { content: 'ID'; }
+  .user-directory-table { border: 0; }
+  .user-directory-table, .user-directory-table thead, .user-directory-table tbody, .user-directory-table tr, .user-directory-table td { display: block; width: 100%; }
+  .user-directory-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .user-directory-table tr { margin-bottom: 12px; padding: 16px; border: 1px solid var(--fc-border); border-radius: 10px; background: var(--fc-surface); }
+  .user-directory-table td { display: flex; justify-content: space-between; gap: 16px; padding: 6px 0; border: 0; text-align: right; }
+  .user-directory-table td::before { color: var(--fc-muted); font-size: 12px; font-weight: 500; }
+  .user-directory-table td:nth-child(2)::before { content: 'Role'; }
+  .user-directory-table td:nth-child(3)::before { content: 'Status'; }
+  .user-directory-table td:nth-child(4)::before { content: 'Action'; }
+  .user-directory-table td:first-child { display: grid; justify-content: initial; text-align: left; }
+  .user-directory-table td:first-child::before { display: none; }
+  .user-directory-table td button { min-height: 40px; }
+}
+
+/* Unit 7 admin density and responsive polish */
+.admin-overview-page, .manage-users-page, .activity-logs-page, .record-directory-page, .content-admin-page { min-width: 0; }
+.admin-panel, .form-card, .activity-log-results, .activity-log-detail, .directory-section, .content-form { min-width: 0; }
+.admin-shortcut { transition: border-color .18s ease, background .18s ease, transform .18s ease; }
+.admin-shortcut:focus-visible { outline: 2px solid var(--fc-primary); outline-offset: 3px; }
+.admin-panel-error { border-color: var(--fc-error); }
+.record-directory-grid { min-width: 0; }
+.record-directory-grid .table-wrap, .activity-log-results .table-wrap { overflow-x: auto; scrollbar-color: var(--fc-border-strong) transparent; }
+.user-directory-toolbar input, .user-directory-toolbar select, .record-directory-toolbar input, .record-directory-toolbar select, .activity-log-controls input, .activity-log-controls select { min-height: 44px; }
+@media (max-width: 767px) { .admin-shortcut { min-height: 76px; } .admin-panel-error { align-items: flex-start; flex-direction: column; } .admin-panel-error .text-button { align-self: flex-start; } .activity-log-layout { min-width: 0; } }

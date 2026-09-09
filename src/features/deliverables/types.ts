@@ -1,0 +1,5 @@
+export type DeliverableStatus = 'pending' | 'in_progress' | 'blocked' | 'completed' | 'cancelled';
+export interface Deliverable { id: string; projectId: string; title: string; description?: string | null; dueDate?: string | null; clientVisible: boolean; status: DeliverableStatus; deploymentUrl?: string | null; sourceCode?: string | null; documentation?: string | null; credentials?: string | null; apkUrl?: string | null; websiteUrl?: string | null; repositoryLink?: string | null; notes?: string | null; createdBy?: string | null; updatedBy?: string | null; completedAt?: string | null; completedBy?: string | null; createdAt: string; updatedAt: string; }
+export type DeliverablePayload = Pick<Deliverable, 'title' | 'description' | 'dueDate' | 'clientVisible' | 'notes'>;
+export const deliverableStatuses: DeliverableStatus[] = ['pending', 'in_progress', 'blocked', 'completed', 'cancelled'];
+export const allowedTransitions: Record<DeliverableStatus, DeliverableStatus[]> = { pending: ['in_progress', 'blocked', 'cancelled'], in_progress: ['blocked', 'completed', 'cancelled'], blocked: ['in_progress', 'cancelled'], completed: [], cancelled: [] };

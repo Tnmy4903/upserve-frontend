@@ -1,0 +1,6 @@
+import { apiRequest } from '../../../services/apiClient';
+import type { PaymentSchedule, Project, ProjectStatus } from '../types';
+import type { Invoice, InvoiceStage } from '../../invoices/types';
+const pathId = (id: string) => encodeURIComponent(id);
+const base = (id: string) => `/api/projects/${pathId(id)}`;
+export const projectApi = { listMine: () => apiRequest<Project[]>('/api/projects/'), listAll: () => apiRequest<Project[]>('/api/projects/all'), get: (id: string) => apiRequest<Project>(base(id)), updateStatus: (id: string, status: ProjectStatus) => apiRequest<{ message: string }>(`${base(id)}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }), updateBudget: (id: string, budget: number) => apiRequest<{ message: string }>(`${base(id)}/budget`, { method: 'PATCH', body: JSON.stringify({ budget }) }), updatePaymentSchedule: (id: string, schedule: PaymentSchedule) => apiRequest<{ message: string }>(`${base(id)}/payment-schedule`, { method: 'PATCH', body: JSON.stringify(schedule) }), generateInvoice: (id: string, dueDate?: string, stage?: InvoiceStage) => apiRequest<Invoice>(`${base(id)}/invoice`, { method: 'POST', body: JSON.stringify({ ...(dueDate ? { dueDate } : {}), ...(stage ? { stage } : {}) }) }) };

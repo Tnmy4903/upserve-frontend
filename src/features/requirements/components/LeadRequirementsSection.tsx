@@ -1,0 +1,14 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ApiError } from '../../../services/apiClient';
+import { requirementApi } from '../services/requirementApi';
+import type { Requirement } from '../types';
+import { RequirementStatusBadge } from './RequirementStatusBadge';
+
+export function LeadRequirementsSection({ leadId, canCreate }: { leadId: string; canCreate: boolean }) {
+  const [requirement, setRequirement] = useState<Requirement | null>(null); const [loading, setLoading] = useState(true); const [missing, setMissing] = useState(false); const [error, setError] = useState(''); const [downloading, setDownloading] = useState(false);
+  async function load() { setLoading(true); setError(''); setMissing(false); try { setRequirement(await requirementApi.forLead(leadId)); } catch (value) { setRequirement(null); if (value instanceof ApiError && value.status === 404) setMissing(true); else setError(value instanceof Error ? value.message : 'Unable to load requirement.'); } finally { setLoading(false); } }
+  useEffect(() => { void load(); }, [leadId]);
+  async function downloadAttachment() { if (!requirement?.attachment) return; setDownloading(true); setError(''); try { await requirementApi.downloadAttachment(requirement.id, requirement.attachment.fileName); } catch (value) { setError(value instanceof Error ? value.message : 'Unable to download the supporting file.'); } finally { setDownloading(false); } }
+  return <section className="card lead-requirements-section"><div className="section-heading"><div><h2>Requirement</h2><p className="muted">Scope captured for this lead.</p></div>{canCreate && missing && <Link className="button-link" to={`/app/requirements/new?leadId=${encodeURIComponent(leadId)}`}>Create requirement</Link>}</div>{loading ? <p className="muted">Loading requirement…</p> : error && !requirement ? <div className="error" role="alert">{error} <button className="secondary" onClick={() => void load()}>Retry</button></div> : requirement ? <div className="linked-requirement"><div><strong>{requirement.businessName}</strong><RequirementStatusBadge status={requirement.status} /></div><p>{requirement.goals}</p>{requirement.attachment && <div className="requirement-attachment-card"><div><strong>Supporting file</strong><span className="muted">{requirement.attachment.fileName} · {(requirement.attachment.fileSize / (1024 * 1024)).toFixed(1)} MB</span></div><button className="secondary" type="button" disabled={downloading} onClick={() => void downloadAttachment()}>{downloading ? 'Downloading…' : 'Download'}</button></div>}{requirement.remarks && <p className="requirement-review-note"><strong>Review note:</strong> {requirement.remarks}</p>}{error && <div className="error" role="alert">{error}</div>}<Link to={`/app/requirements/${requirement.id}`}>Review requirement</Link></div> : <p className="muted">No requirement has been created for this lead yet.</p>}</section>;
+}
