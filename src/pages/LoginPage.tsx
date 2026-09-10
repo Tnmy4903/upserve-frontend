@@ -3,8 +3,10 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { BrandLogo } from '../components/BrandLogo';
+import { useSEO } from '../components/SEO';
 
 export function LoginPage() {
+  useSEO({ title: 'Sign in | Upserve', description: 'Private Upserve workspace sign in.', path: '/login', indexable: false });
   const { user, login, sessionExpired } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');

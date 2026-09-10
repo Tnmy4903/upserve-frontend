@@ -2,8 +2,10 @@ import { FormEvent, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useSEO } from '../components/SEO';
 
 export function ChangePasswordPage() {
+  useSEO({ title: 'Change password | Upserve', description: 'Private Upserve account password update.', path: '/change-password', indexable: false });
   const { user, changePassword, logout } = useAuth();
   const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState('');

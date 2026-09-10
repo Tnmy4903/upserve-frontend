@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { SEO, publicSeo } from '../components/SEO';
 
 const buildCards = [
   ['01', 'Digital products', 'Websites, apps and custom software shaped around the way your business works.'],
@@ -20,16 +20,9 @@ const processSteps = [
 ] as const;
 
 export function HomePage() {
-  useEffect(() => {
-    document.title = 'Upserve | Software Development Agency';
-    const meta = document.querySelector('meta[name="description"]') || document.createElement('meta');
-    meta.setAttribute('name', 'description');
-    meta.setAttribute('content', 'Upserve is a software development agency building websites, apps, custom software and AI tools — from first requirement to delivery.');
-    document.head.appendChild(meta);
-  }, []);
-
   return (
     <main className="public-page home-page">
+      <SEO {...publicSeo.home} path="/" />
       <section className="hero-shell" aria-labelledby="home-title">
         <div className="hero-copy">
           <p className="eyebrow">Software development agency</p>

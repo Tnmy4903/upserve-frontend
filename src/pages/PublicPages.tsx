@@ -6,18 +6,20 @@ import { portfolioApi } from '../features/portfolio/services/portfolioApi';
 import { contactApi } from '../features/contact/services/contactApi';
 import type { ContentRecord } from '../types/content';
 import { LoadingState } from '../components/ui';
+import { SEO, publicImage, publicSeo, useSEO } from '../components/SEO';
 
 type PublicRecord = ContentRecord;
 
 const value = (record: PublicRecord, key: string, fallback = '') => String(record[key] ?? fallback);
 const list = (record: PublicRecord, key: string) => Array.isArray(record[key]) ? record[key].map(String) : [];
+const contentSummary = (record: PublicRecord) => value(record, 'excerpt') || value(record, 'description') || value(record, 'content').replace(/\s+/g, ' ').trim().slice(0, 160);
 const featureNames = (record: PublicRecord) => Array.isArray(record.features) ? record.features.map(item => typeof item === 'string' ? item : item && typeof item === 'object' ? String((item as Record<string, unknown>).title ?? (item as Record<string, unknown>).name ?? '') : '').filter(Boolean) : [];
 const date = (raw: unknown) => raw ? new Date(String(raw)).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : '';
 const readingTime = (content: string) => `${Math.max(1, Math.ceil(content.trim().split(/\s+/).filter(Boolean).length / 200))} min read`;
 
-function State({ loading, error, onRetry }: { loading: boolean; error: string; onRetry?: () => void }) {
+function State({ loading, error, onRetry, heading = 'h2' }: { loading: boolean; error: string; onRetry?: () => void; heading?: 'h1' | 'h2' }) {
   if (loading) return <LoadingState label="Loading content" />;
-  if (error) return <div className="public-state error" role="alert"><h2>We couldn't load this content.</h2><span>{error}</span>{onRetry && <button type="button" className="secondary" onClick={onRetry}>Retry</button>}</div>;
+  if (error) { const Heading = heading; return <div className="public-state error" role="alert"><Heading>We couldn't load this content.</Heading><span>{error}</span>{onRetry && <button type="button" className="secondary" onClick={onRetry}>Retry</button>}</div>; }
   return null;
 }
 
@@ -28,42 +30,33 @@ function Cover({ src, alt, className = '' }: { src: string; alt: string; classNa
 }
 
 export function BlogsPage() {
-  useEffect(() => {
-    document.title = 'Insights | Upserve';
-    const meta = document.querySelector('meta[name="description"]') || document.createElement('meta');
-    meta.setAttribute('name', 'description');
-    meta.setAttribute('content', 'Practical perspectives on software, digital products and technology from the Upserve team.');
-    document.head.appendChild(meta);
-  }, []);
   const [items, setItems] = useState<PublicRecord[]>([]); const [loading, setLoading] = useState(true); const [error, setError] = useState(''); const [attempt, setAttempt] = useState(0);
   useEffect(() => { setLoading(true); setError(''); blogApi.list().then(setItems).catch(() => setError('Published insights are temporarily unavailable.')).finally(() => setLoading(false)); }, [attempt]);
-  return <main className="public-page content-page"><div className="content-intro"><p className="eyebrow">Upserve insights</p><h1>Ideas for Building What's Next</h1><p>Practical perspectives on digital products, technology and building better experiences.</p></div><State loading={loading} error={error} onRetry={() => setAttempt(value => value + 1)} />{!loading && !error && (items.length ? <div className="editorial-grid">{items.map(item => { const content = value(item, 'content'); const excerpt = value(item, 'excerpt', content); const title = value(item, 'title'); return <article className="editorial-card" key={value(item, 'id', value(item, 'slug'))}><Cover src={value(item, 'thumbnail')} alt={title || 'Upserve content'} /><div className="editorial-card__body"><div className="content-meta"><span>Insights</span><span>{date(item.createdAt)}</span><span>{readingTime(content)}</span></div><strong className="editorial-card__title">{title}</strong><p>{excerpt.slice(0, 180)}{excerpt.length > 180 ? '…' : ''}</p><Link className="text-link" to={`/blogs/${encodeURIComponent(value(item, 'slug'))}`}>Read article <ArrowRight size={16} aria-hidden="true" /></Link></div></article>; })}</div> : <div className="empty-state"><h2>Fresh thinking is on the way.</h2><p>There are no published articles yet.</p></div>)}</main>;
+  return <main className="public-page content-page"><SEO {...publicSeo.blogs} path="/blogs" /><div className="content-intro"><p className="eyebrow">Upserve insights</p><h1>Ideas for Building What's Next</h1><p>Practical perspectives on digital products, technology and building better experiences.</p></div><State loading={loading} error={error} onRetry={() => setAttempt(value => value + 1)} />{!loading && !error && (items.length ? <div className="editorial-grid">{items.map(item => { const content = value(item, 'content'); const excerpt = value(item, 'excerpt', content); const title = value(item, 'title'); return <article className="editorial-card" key={value(item, 'id', value(item, 'slug'))}><Cover src={value(item, 'thumbnail')} alt={title || 'Upserve content'} /><div className="editorial-card__body"><div className="content-meta"><span>Insights</span><span>{date(item.createdAt)}</span><span>{readingTime(content)}</span></div><strong className="editorial-card__title">{title}</strong><p>{excerpt.slice(0, 180)}{excerpt.length > 180 ? '…' : ''}</p><Link className="text-link" to={`/blogs/${encodeURIComponent(value(item, 'slug'))}`}>Read article <ArrowRight size={16} aria-hidden="true" /></Link></div></article>; })}</div> : <div className="empty-state"><h2>Fresh thinking is on the way.</h2><p>There are no published articles yet.</p></div>)}</main>;
 }
 
 export function BlogDetailPage() {
   const { slug = '' } = useParams(); const [item, setItem] = useState<PublicRecord | null>(null); const [loading, setLoading] = useState(true); const [error, setError] = useState(''); const [attempt, setAttempt] = useState(0);
-  useEffect(() => { setLoading(true); setError(''); setItem(null); blogApi.getBySlug(slug).then(next => { setItem(next); const title = value(next, 'title'); document.title = title ? `${title} | Upserve` : 'Insights | Upserve'; }).catch(() => { setError('This insight is not available.'); document.title = 'Insight not found | Upserve'; }).finally(() => setLoading(false)); }, [slug, attempt]);
-  return <main className="public-page content-page"><Link className="back-link" to="/blogs"><ArrowLeft size={16} aria-hidden="true" /> Back to insights</Link><State loading={loading} error={error} onRetry={() => setAttempt(value => value + 1)} />{item && <article className="article-detail"><Cover src={value(item, 'thumbnail')} alt={value(item, 'title') || 'Upserve content'} className="article-detail__cover" /><div className="article-detail__inner"><div className="content-meta"><span>Insights</span><span>{date(item.createdAt)}</span><span>{readingTime(value(item, 'content'))}</span>{item.views !== undefined && <span>{value(item, 'views')} views</span>}</div><h1>{value(item, 'title')}</h1><div className="article-body">{value(item, 'content')}</div></div></article>}</main>;
+  useEffect(() => { setLoading(true); setError(''); setItem(null); blogApi.getBySlug(slug).then(setItem).catch(() => setError('This insight is not available.')).finally(() => setLoading(false)); }, [slug, attempt]);
+  const title = item ? `${value(item, 'title')} | Upserve` : error ? 'Insight not found | Upserve' : publicSeo.blogs.title;
+  const description = item ? contentSummary(item) : error ? 'This insight is not available.' : publicSeo.blogs.description;
+  return <main className="public-page content-page"><SEO title={title} description={description} path={`/blogs/${encodeURIComponent(slug)}`} image={item ? publicImage(value(item, 'thumbnail')) : undefined} type="article" indexable={Boolean(item)} /><Link className="back-link" to="/blogs"><ArrowLeft size={16} aria-hidden="true" /> Back to insights</Link><State loading={loading} error={error} heading="h1" onRetry={() => setAttempt(value => value + 1)} />{item && <article className="article-detail"><Cover src={value(item, 'thumbnail')} alt={value(item, 'title') || 'Upserve content'} className="article-detail__cover" /><div className="article-detail__inner"><div className="content-meta"><span>Insights</span><span>{date(item.createdAt)}</span><span>{readingTime(value(item, 'content'))}</span>{item.views !== undefined && <span>{value(item, 'views')} views</span>}</div><h1>{value(item, 'title')}</h1><div className="article-body">{value(item, 'content')}</div></div></article>}</main>;
 }
 
 export function PortfolioPage() {
-  useEffect(() => {
-    document.title = 'Our Work | Upserve';
-    const meta = document.querySelector('meta[name="description"]') || document.createElement('meta');
-    meta.setAttribute('name', 'description');
-    meta.setAttribute('content', 'Digital products and software Upserve has built, from first requirement to delivery.');
-    document.head.appendChild(meta);
-  }, []);
   const [items, setItems] = useState<PublicRecord[]>([]); const [loading, setLoading] = useState(true); const [error, setError] = useState(''); const [attempt, setAttempt] = useState(0);
   useEffect(() => { setLoading(true); setError(''); portfolioApi.listPublic().then(setItems).catch(() => setError('Published work is temporarily unavailable.')).finally(() => setLoading(false)); }, [attempt]);
-  return <main className="public-page content-page"><div className="content-intro"><p className="eyebrow">Selected work</p><h1>Work We're Proud Of</h1><p>A selection of digital products and experiences we've helped bring from first idea to delivery.</p></div><State loading={loading} error={error} onRetry={() => setAttempt(value => value + 1)} />{!loading && !error && (items.length ? <div className="case-grid">{items.map(item => { const title = value(item, 'title'); return <article className="case-card" key={value(item, 'id', value(item, 'slug'))}><Cover src={list(item, 'images')[0] || ''} alt={title || 'Upserve content'} /><div className="case-card__body"><div className="content-meta"><span>{value(item, 'category', 'Case study')}</span>{item.featured === true && <span className="featured-label">Featured</span>}</div><strong className="case-card__title">{title}</strong><p>{value(item, 'description')}</p><div className="tag-row">{list(item, 'techStack').slice(0, 3).map(tag => <span className="tag" key={tag}>{tag}</span>)}</div><Link className="text-link" to={`/portfolio/${encodeURIComponent(value(item, 'slug'))}`}>View case study <ArrowRight size={16} aria-hidden="true" /></Link></div></article>; })}</div> : <div className="empty-state"><h2>Our work is taking shape.</h2><p>Published projects will appear here when they are ready to share.</p></div>)}</main>;
+  return <main className="public-page content-page"><SEO {...publicSeo.portfolio} path="/portfolio" /><div className="content-intro"><p className="eyebrow">Selected work</p><h1>Work We're Proud Of</h1><p>A selection of digital products and experiences we've helped bring from first idea to delivery.</p></div><State loading={loading} error={error} onRetry={() => setAttempt(value => value + 1)} />{!loading && !error && (items.length ? <div className="case-grid">{items.map(item => { const title = value(item, 'title'); return <article className="case-card" key={value(item, 'id', value(item, 'slug'))}><Cover src={list(item, 'images')[0] || ''} alt={title || 'Upserve content'} /><div className="case-card__body"><div className="content-meta"><span>{value(item, 'category', 'Case study')}</span>{item.featured === true && <span className="featured-label">Featured</span>}</div><strong className="case-card__title">{title}</strong><p>{value(item, 'description')}</p><div className="tag-row">{list(item, 'techStack').slice(0, 3).map(tag => <span className="tag" key={tag}>{tag}</span>)}</div><Link className="text-link" to={`/portfolio/${encodeURIComponent(value(item, 'slug'))}`}>View case study <ArrowRight size={16} aria-hidden="true" /></Link></div></article>; })}</div> : <div className="empty-state"><h2>Our work is taking shape.</h2><p>Published projects will appear here when they are ready to share.</p></div>)}</main>;
 }
 
 export function PortfolioDetailPage() {
   const { slug = '' } = useParams(); const [item, setItem] = useState<PublicRecord | null>(null); const [loading, setLoading] = useState(true); const [error, setError] = useState(''); const [attempt, setAttempt] = useState(0);
-  useEffect(() => { setLoading(true); setError(''); setItem(null); portfolioApi.getBySlug(slug).then(next => { setItem(next); const title = value(next, 'title'); document.title = title ? `${title} | Upserve` : 'Our Work | Upserve'; }).catch(() => { setError('This project is not available.'); document.title = 'Work not found | Upserve'; }).finally(() => setLoading(false)); }, [slug, attempt]);
+  useEffect(() => { setLoading(true); setError(''); setItem(null); portfolioApi.getBySlug(slug).then(setItem).catch(() => setError('This project is not available.')).finally(() => setLoading(false)); }, [slug, attempt]);
   const features = item ? featureNames(item) : [];
-  return <main className="public-page content-page"><Link className="back-link" to="/portfolio"><ArrowLeft size={16} aria-hidden="true" /> Back to selected work</Link><State loading={loading} error={error} onRetry={() => setAttempt(value => value + 1)} />{item && <><article className="case-detail"><div className="case-detail__hero"><Cover src={list(item, 'images')[0] || ''} alt={value(item, 'title') || 'Upserve content'} /><div><div className="content-meta"><span>{value(item, 'category', 'Case study')}</span>{item.featured === true && <span className="featured-label">Featured</span>}</div><h1>{value(item, 'title')}</h1><p>{value(item, 'description')}</p><div className="tag-row">{list(item, 'techStack').map(tag => <span className="tag" key={tag}>{tag}</span>)}</div><div className="actions">{value(item, 'websiteUrl') && <a className="button-link" href={value(item, 'websiteUrl')} target="_blank" rel="noreferrer">Visit live project <ExternalLink size={16} aria-hidden="true" /></a>}{value(item, 'githubUrl') && <a className="button-link button-link--quiet" href={value(item, 'githubUrl')} target="_blank" rel="noreferrer">View source <ExternalLink size={16} aria-hidden="true" /></a>}</div></div></div>{features.length > 0 && <section className="case-detail__features"><p className="eyebrow">Project features</p><div>{features.map(feature => <span className="tag" key={feature}>{feature}</span>)}</div></section>}{list(item, 'images').length > 1 && <div className="case-gallery">{list(item, 'images').slice(1).map((image, index) => <Cover key={image} src={image} alt={`${value(item, 'title') || 'Upserve content'} detail ${index + 2}`} />)}</div>}</article><section className="home-cta case-detail-cta"><div><p className="eyebrow">Have a similar project in mind?</p><h2>Let's build yours.</h2></div><Link className="button-link" to="/contact">Start a Project <ArrowRight size={16} aria-hidden="true" /></Link></section></>}</main>;
+  const title = item ? `${value(item, 'title')} | Upserve` : error ? 'Work not found | Upserve' : publicSeo.portfolio.title;
+  const description = item ? value(item, 'description') || publicSeo.portfolio.description : error ? 'This project is not available.' : publicSeo.portfolio.description;
+  const image = item ? publicImage(list(item, 'images')[0]) : undefined;
+  return <main className="public-page content-page"><SEO title={title} description={description} path={`/portfolio/${encodeURIComponent(slug)}`} image={image} type="article" indexable={Boolean(item)} /><Link className="back-link" to="/portfolio"><ArrowLeft size={16} aria-hidden="true" /> Back to selected work</Link><State loading={loading} error={error} heading="h1" onRetry={() => setAttempt(value => value + 1)} />{item && <><article className="case-detail"><div className="case-detail__hero"><Cover src={list(item, 'images')[0] || ''} alt={value(item, 'title') || 'Upserve content'} /><div><div className="content-meta"><span>{value(item, 'category', 'Case study')}</span>{item.featured === true && <span className="featured-label">Featured</span>}</div><h1>{value(item, 'title')}</h1><p>{value(item, 'description')}</p><div className="tag-row">{list(item, 'techStack').map(tag => <span className="tag" key={tag}>{tag}</span>)}</div><div className="actions">{value(item, 'websiteUrl') && <a className="button-link" href={value(item, 'websiteUrl')} target="_blank" rel="noreferrer">Visit live project <ExternalLink size={16} aria-hidden="true" /></a>}{value(item, 'githubUrl') && <a className="button-link button-link--quiet" href={value(item, 'githubUrl')} target="_blank" rel="noreferrer">View source <ExternalLink size={16} aria-hidden="true" /></a>}</div></div></div>{features.length > 0 && <section className="case-detail__features"><p className="eyebrow">Project features</p><div>{features.map(feature => <span className="tag" key={feature}>{feature}</span>)}</div></section>}{list(item, 'images').length > 1 && <div className="case-gallery">{list(item, 'images').slice(1).map((image, index) => <Cover key={image} src={image} alt={`${value(item, 'title') || 'Upserve content'} detail ${index + 2}`} />)}</div>}</article><section className="home-cta case-detail-cta"><div><p className="eyebrow">Have a similar project in mind?</p><h2>Let's build yours.</h2></div><Link className="button-link" to="/contact">Start a Project <ArrowRight size={16} aria-hidden="true" /></Link></section></>}</main>;
 }
 
 const finalServices = [
@@ -76,15 +69,7 @@ const finalServices = [
 ] as const;
 
 export function ServicesPage() {
-  useEffect(() => {
-    document.title = 'Services | Software, Web, App & AI Development | Upserve';
-    const meta = document.querySelector('meta[name="description"]') || document.createElement('meta');
-    meta.setAttribute('name', 'description');
-    meta.setAttribute('content', 'Websites, mobile apps, custom software, AI agents and automation — see what Upserve builds and what\'s included in each engagement.');
-    document.head.appendChild(meta);
-  }, []);
-
-  return <main className="public-page content-page services-page">
+  return <main className="public-page content-page services-page"><SEO {...publicSeo.services} path="/services" />
     <div className="content-intro">
       <p className="eyebrow">Our services</p>
       <h1>What We Build</h1>
@@ -123,14 +108,6 @@ export function ServicesPage() {
 }
 
 export function ShowcasePage() {
-  useEffect(() => {
-    document.title = 'Platform Showcase | How Upserve Runs Projects';
-    const meta = document.querySelector('meta[name="description"]') || document.createElement('meta');
-    meta.setAttribute('name', 'description');
-    meta.setAttribute('content', 'A look at the internal platform Upserve uses to manage requirements, delivery and communication on every project.');
-    document.head.appendChild(meta);
-  }, []);
-
   const workflow = [
     ['01', 'Requirement', 'Capture the real need.'],
     ['02', 'Scope', 'Turn it into clear deliverables.'],
@@ -143,7 +120,7 @@ export function ShowcasePage() {
     ['Delivery visibility', 'Make meaningful project progress easier for clients and the team to follow.'],
   ] as const;
 
-  return <main className="public-page content-page showcase-page">
+  return <main className="public-page content-page showcase-page"><SEO {...publicSeo.showcase} path="/showcase" />
     <div className="content-intro">
       <p className="eyebrow">Platform showcase</p>
       <h1>How We Run the Work</h1>
@@ -186,14 +163,7 @@ export function ShowcasePage() {
 }
 
 export function AboutPage() {
-  useEffect(() => {
-    document.title = 'About Upserve | Software Development Agency';
-    const meta = document.querySelector('meta[name="description"]') || document.createElement('meta');
-    meta.setAttribute('name', 'description');
-    meta.setAttribute('content', 'Meet the team behind Upserve and how we approach software, digital products and delivery.');
-    document.head.appendChild(meta);
-  }, []);
-  return <main className="public-page content-page about-page">
+  return <main className="public-page content-page about-page"><SEO {...publicSeo.about} path="/about" />
     <div className="content-intro"><p className="eyebrow">About Upserve</p><h1>Useful Digital Products, Shaped With Care</h1><p>Upserve is a software development partner for businesses that want to build, automate and scale digital products with confidence.</p></div>
     <section className="about-founder" aria-labelledby="founder-title">
       <div className="about-founder__media">
@@ -221,13 +191,7 @@ export function AboutPage() {
 }
 
 export function ContactPage() {
-  useEffect(() => {
-    document.title = 'Contact Upserve | Start a Project';
-    const meta = document.querySelector('meta[name="description"]') || document.createElement('meta');
-    meta.setAttribute('name', 'description');
-    meta.setAttribute('content', 'Tell Upserve about your project. Get in touch to start building your website, app or software.');
-    document.head.appendChild(meta);
-  }, []);
+  useSEO({ ...publicSeo.contact, path: '/contact' });
   const [form, setForm] = useState({ name: '', email: '', phone: '', companyName: '', business: '', message: '' });
   const [state, setState] = useState('');
   const [busy, setBusy] = useState(false);

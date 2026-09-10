@@ -1,18 +1,17 @@
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BriefcaseBusiness, ChevronLeft, ChevronRight, ClipboardList, FileText, FolderKanban, LayoutDashboard, Settings, ShieldCheck, UserCog, UsersRound } from 'lucide-react';
 import { GlobalHeader } from '../components/GlobalHeader';
 import { useAuth } from '../context/AuthContext';
+import { useSEO } from '../components/SEO';
 
 export function AppLayout() {
   const { user } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
-  useEffect(() => {
-    const labels: Record<string, string> = { '/app': 'Dashboard', '/app/leads': 'Leads', '/app/requirements': 'Requirements', '/app/quotations': 'Quotations', '/app/projects': 'Projects', '/app/notifications': 'Notifications', '/app/profile': 'Profile', '/app/admin': 'Admin overview', '/app/users': 'Manage users', '/app/activity-logs': 'Activity logs', '/app/record-directory': 'Record directory', '/app/content': 'Content management' };
-    const section = Object.keys(labels).find(path => location.pathname === path || (path !== '/app' && location.pathname.startsWith(`${path}/`)));
-    document.title = `${section ? labels[section] : 'Workspace'} | Upserve`;
-  }, [location.pathname]);
+  const labels: Record<string, string> = { '/app': 'Dashboard', '/app/leads': 'Leads', '/app/requirements': 'Requirements', '/app/quotations': 'Quotations', '/app/projects': 'Projects', '/app/notifications': 'Notifications', '/app/profile': 'Profile', '/app/admin': 'Admin overview', '/app/users': 'Manage users', '/app/activity-logs': 'Activity logs', '/app/record-directory': 'Record directory', '/app/content': 'Content management' };
+  const section = Object.keys(labels).find(path => location.pathname === path || (path !== '/app' && location.pathname.startsWith(`${path}/`)));
+  useSEO({ title: `${section ? labels[section] : 'Workspace'} | Upserve`, description: 'Private Upserve workspace.', path: location.pathname, indexable: false });
   const breadcrumbParts = location.pathname.split('/').filter(Boolean);
   const breadcrumbLinks = breadcrumbParts.map((part, index, parts) => {
     const isIdentifier = part.length > 20 || /^[a-f0-9]{16,}$/i.test(part);
