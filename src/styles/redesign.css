@@ -1167,7 +1167,7 @@ button:active:not(:disabled), .button-link:active { background: var(--fc-primary
 .public-state span { color: var(--fc-muted); }
 .public-state button { margin-top: 8px; width: max-content; }
 .contact-layout { gap: 72px; }
-.contact-note { border-color: var(--fc-accent); color: var(--fc-muted); }
+.contact-note { border-color: var(--fc-primary); color: var(--fc-muted); }
 .public-form { border-color: var(--fc-border); background: var(--fc-surface); }
 .public-form h2 { color: var(--fc-text); font-size: 24px; }
 .public-form input, .public-form textarea { background: var(--fc-surface-soft); color: var(--fc-text); }
