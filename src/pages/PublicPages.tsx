@@ -765,6 +765,7 @@ export function AboutPage() {
               href="https://www.linkedin.com/in/tnmy4903/"
               target="_blank"
               rel="noreferrer"
+              aria-label="View LinkedIn profile"
             >
               <span className="founder-linkedin__mark" aria-hidden="true">
                 in
