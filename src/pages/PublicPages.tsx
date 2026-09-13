@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { blogApi } from "../features/blog/services/blogApi";
 import { portfolioApi } from "../features/portfolio/services/portfolioApi";
 import { contactApi } from "../features/contact/services/contactApi";
+import { ApiError } from "../services/apiClient";
 import { IdeaToProductExperience } from "../features/ideaToProduct";
 import type { ContentRecord } from "../types/content";
 import { LoadingState } from "../components/ui";
@@ -894,7 +895,11 @@ export function ContactPage() {
       setState("success");
     } catch (error) {
       setState(
-        error instanceof Error ? error.message : "Unable to send your message.",
+        error instanceof ApiError && error.status === 429
+          ? "Too many enquiries from this connection. Please wait a little and try again."
+          : error instanceof Error
+            ? error.message
+            : "Unable to send your message.",
       );
     } finally {
       setBusy(false);
@@ -908,7 +913,7 @@ export function ContactPage() {
           <h1>Ready to Start Your Project?</h1>
           <p>
             Tell us what you're working on, what's getting in the way, and where
-            you want to go, or email us directly at contact@upserve.in.
+            you want to go, or email us directly.
           </p>
           <div className="contact-details">
             <a href="mailto:contact@upserve.in">
