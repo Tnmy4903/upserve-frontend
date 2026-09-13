@@ -1,0 +1,86 @@
+.idea-to-product-track {
+  width: 100%;
+  min-width: 0;
+}
+
+.idea-to-product-track.is-pinned {
+  aspect-ratio: 16 / 9;
+}
+
+.idea-to-product-feature {
+  width: 100%;
+  position: relative;
+  height: auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+.idea-to-product-host {
+  display: none;
+}
+
+.idea-to-product-pin {
+  position: relative;
+  top: 0;
+  width: 100%;
+  height: auto;
+  align-self: start;
+  min-width: 0;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+  border: 1px solid transparent;
+  border-radius: var(--fc-radius-card);
+  background: var(--fc-surface);
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, .2);
+}
+
+.idea-to-product-stage {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: .65rem;
+  color: #f5f3ef;
+  font-size: .85rem;
+  line-height: 1.25;
+  letter-spacing: .01em;
+  text-align: right;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.idea-to-product-stage p { margin: 0; }
+.idea-to-product-stage__number {
+  color: #a78bfa;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+@media (max-width: 767px) {
+  .idea-to-product-track { margin-bottom: 1rem; }
+  .idea-to-product-track.is-pinned { margin-bottom: 4rem; }
+  .idea-to-product-pin { border-radius: .85rem; }
+  .idea-to-product-stage {
+    right: .75rem;
+    bottom: .75rem;
+    max-width: calc(100% - 1.5rem);
+    gap: .45rem;
+    align-items: flex-end;
+    font-size: .75rem;
+    white-space: normal;
+  }
+  .idea-to-product-stage p {
+    max-width: min(68vw, 13rem);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+}
+
+.idea-to-product-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
