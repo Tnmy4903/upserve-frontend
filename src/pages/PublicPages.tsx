@@ -911,9 +911,9 @@ export function ContactPage() {
             you want to go.
           </p>
           <div className="contact-details">
-            <a href="mailto:tnmy4903@gmail.com">
+            <a href="mailto:contact@upserve.in">
               <span>Email</span>
-              <strong>tnmy4903@gmail.com</strong>
+              <strong>contact@upserve.in</strong>
             </a>
             <a href="tel:+918858314903">
               <span>Phone</span>
