@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from "react";
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
 
-export function useScrollProgress(elementRef: React.RefObject<HTMLElement | null>) {
+export function useScrollProgress(
+  elementRef: React.RefObject<HTMLElement | null>,
+) {
   const [progress, setProgress] = useState(0);
   const progressRef = useRef(0);
   const activeRef = useRef(false);
@@ -16,7 +18,7 @@ export function useScrollProgress(elementRef: React.RefObject<HTMLElement | null
     };
 
     const updateProgress = (deltaY: number) => {
-      const step = Math.max(0.025, Math.min(0.12, Math.abs(deltaY) / 900));
+      const step = Math.max(0.0075, Math.min(0.045, Math.abs(deltaY) / 2000));
       const next = clamp(progressRef.current + (deltaY > 0 ? step : -step));
       progressRef.current = next;
       setProgress(next);
@@ -84,7 +86,11 @@ export function useScrollProgress(elementRef: React.RefObject<HTMLElement | null
     const handleTouchMove = (event: TouchEvent) => {
       const currentY = event.touches[0]?.clientY;
       const previousY = touchYRef.current;
-      if (currentY === undefined || previousY === null || previousY === undefined) {
+      if (
+        currentY === undefined ||
+        previousY === null ||
+        previousY === undefined
+      ) {
         touchYRef.current = currentY ?? null;
         return;
       }

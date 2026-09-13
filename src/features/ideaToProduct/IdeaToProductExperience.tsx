@@ -33,7 +33,10 @@ export function IdeaToProductExperience({ className }: IdeaToProductProps) {
   const reducedMotion = useReducedMotion();
   const effectiveProgress = reducedMotion ? 1 : progress;
   const frame = getSequenceFrame(initialSequence, effectiveProgress);
-  const stageIndex = Math.min(STAGES.length - 1, Math.floor(effectiveProgress * STAGES.length));
+  const stageIndex = Math.min(
+    STAGES.length - 1,
+    Math.floor(effectiveProgress * STAGES.length),
+  );
   const isFinal = stageIndex === STAGES.length - 1 && effectiveProgress >= 0.96;
   // Release the two-column pin as soon as the final state is reached. The
   // final frame remains in normal flow, so the following sections never pass
@@ -44,7 +47,9 @@ export function IdeaToProductExperience({ className }: IdeaToProductProps) {
     const updatePin = () => {
       const track = trackRef.current;
       const section = track?.closest<HTMLElement>(".about-video");
-      const heading = section?.querySelector<HTMLElement>(".about-video__heading");
+      const heading = section?.querySelector<HTMLElement>(
+        ".about-video__heading",
+      );
 
       if (!isPinned) {
         setPinStyle(undefined);
@@ -90,7 +95,6 @@ export function IdeaToProductExperience({ className }: IdeaToProductProps) {
     return () => window.removeEventListener("resize", updatePin);
   }, [isPinned]);
 
-
   useEffect(() => {
     // There are only a few small transition frames. Loading the complete
     // sequence once prevents a fast scroll from jumping over unloaded phases.
@@ -120,12 +124,21 @@ export function IdeaToProductExperience({ className }: IdeaToProductProps) {
             cache={cacheRef.current}
             ariaLabel="Upserve process visual"
           />
-          <div className="idea-to-product-stage" aria-live="polite">
-            <span className="idea-to-product-stage__number">
-              {String(stageIndex + 1).padStart(2, "0")}
-            </span>
+          <div
+            className={`idea-to-product-stage${isFinal ? " idea-to-product-stage--final" : ""}`}
+            aria-live="polite"
+          >
+            {!isFinal && (
+              <span className="idea-to-product-stage__number">
+                {String(stageIndex + 1).padStart(2, "0")}
+              </span>
+            )}
             {isFinal ? (
-              <p>From idea to product. Upserve. Build Digital Products That Scale.</p>
+              <p className="idea-to-product-final-message">
+                <span>From idea to product</span>
+                <strong>Upserve</strong>
+                <span>Build Digital Products That Scale</span>
+              </p>
             ) : (
               <p>{STAGES[stageIndex]}</p>
             )}
