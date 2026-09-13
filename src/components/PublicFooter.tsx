@@ -11,6 +11,7 @@ export function PublicFooter() {
         <div className="public-footer__brand">
           <Link className="public-footer__logo" to="/" aria-label="Upserve home"><BrandLogo /></Link>
           <p>Upserve builds websites, apps, AI tools and custom software — end-to-end, from requirement to delivery.</p>
+          <p>Contact us at <a href="mailto:contact@upserve.in">contact@upserve.in</a></p>
         </div>
         <div className="public-footer__column">
           <p className="public-footer__label">What We Do</p>

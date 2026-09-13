@@ -908,7 +908,7 @@ export function ContactPage() {
           <h1>Ready to Start Your Project?</h1>
           <p>
             Tell us what you're working on, what's getting in the way, and where
-            you want to go.
+            you want to go, or email us directly at contact@upserve.in.
           </p>
           <div className="contact-details">
             <a href="mailto:contact@upserve.in">
