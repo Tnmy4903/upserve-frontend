@@ -1,0 +1,247 @@
+Upserve — How We Work Scroll Animation
+12-Step Implementation Roadmap
+Step 1 — Audit Current Section
+
+Codex inspects the existing website and identifies:
+
+How We Work component
+Current YouTube/video
+exact container/layout
+surrounding text
+responsive behavior
+existing animation/scroll libraries
+
+Goal: know exactly what we are replacing without disturbing the rest of the site.
+
+Step 2 — Build Keyframe Sequence System
+
+Connect:
+
+public/keyframes/
+├── 0-1/
+├── 1-2/
+├── ...
+└── 8-9/
+
+Create a clean sequence/manifest from the numbered images.
+
+It must automatically respect the actual number of frames in each folder.
+
+Goal: turn all our Gemini images into one logical animation sequence.
+
+Step 3 — Build Canvas Renderer
+
+Create the canvas component/engine.
+
+It must:
+
+load images
+render one frame at a time
+preserve aspect ratio
+stay sharp on Retina/high-DPI
+resize correctly
+remain centered
+
+Goal: prove the keyframes can render correctly before connecting scrolling.
+
+Step 4 — Replace YouTube
+
+Remove the YouTube/video from the How We Work section and put the canvas in the exact same visual space.
+
+Important:
+
+Same section, same position, same footprint, same surrounding layout.
+
+No new fullscreen hero.
+
+Goal: visually replace the video with our canvas without redesigning the page.
+
+Step 5 — Connect Scroll → Progress
+
+Create the scroll controller.
+
+Page scroll
+     ↓
+How We Work progress 0 → 1
+     ↓
+Animation progress
+
+No autoplay.
+
+No wheel hijacking.
+
+No custom scroll lock.
+
+Goal: user's actual page scroll controls the animation.
+
+Step 6 — Connect Progress → All Frames
+
+Map the continuous scroll progress across:
+
+0-1
+1-2
+2-3
+3-4
+4-5
+5-6
+6-7
+7-8
+8-9
+
+The user should experience:
+
+START
+ ↓
+Discovery
+ ↓
+Scope
+ ↓
+Agreement
+ ↓
+Design
+ ↓
+QA
+ ↓
+Deployment
+ ↓
+Launch Support
+ ↓
+Final mint point
+
+Goal: one continuous visual transformation.
+
+Step 7 — Make Canvas Sticky
+
+While the user scrolls through the animation:
+
+canvas stays visually fixed
+        +
+animation progresses
+
+When animation reaches the end:
+
+sticky section ends
+↓
+normal page scrolling continues
+
+When scrolling upward:
+
+animation reverses
+
+Goal: Apple-style pinned scroll experience.
+
+Step 8 — Synchronize Stage Content
+
+Connect the existing How We Work text/stage information to the same scroll progress.
+
+For example:
+
+01 Discovery
+02 Scope
+03 Agreement
+04 Design & Development
+05 Testing & QA
+06 Deployment & Handover
+07 Launch Support
+08 Final
+
+Text changes smoothly as the visual reaches each stage.
+
+Goal: visual + content feel like one experience.
+
+Step 9 — Add Progress Indicator
+
+Implement/refine the stage progress indicator.
+
+Example:
+
+01 Discovery
+02 Scope
+03 Agreement
+04 Design
+05 QA
+06 Launch
+
+The active stage follows the animation.
+
+Goal: user always understands where they are in the process.
+
+Step 10 — Performance + Loading
+
+Optimize the actual frame system.
+
+Implement as needed:
+
+preload first frames
+preload upcoming frames
+image decoding
+caching
+requestAnimationFrame
+avoid unnecessary React renders
+efficient canvas rendering
+prevent blank frames
+prevent layout shift
+
+Goal: smooth experience instead of a beautiful animation that stutters.
+
+Step 11 — Responsive + Accessibility
+
+Make the experience work properly on:
+
+desktop
+laptop
+tablet
+mobile
+touch scrolling
+resize/orientation changes
+
+Also handle:
+
+prefers-reduced-motion
+
+The canvas should remain visually strong on mobile rather than simply becoming a tiny desktop version.
+
+Step 12 — Final QA + Polish
+
+Final testing:
+
+slow scroll
+fast scroll
+reverse scroll
+entering section
+leaving section
+re-entering section
+refresh
+mobile touch
+resize
+console errors
+image loading
+layout shifts
+browser compatibility
+
+Then polish:
+
+scroll distance
+frame pacing
+stage timing
+text transitions
+sticky timing
+visual alignment
+Final result
+Existing How We Work
+        ↓
+Same visual area
+        ↓
+Canvas
+        ↓
+Scroll-controlled
+        ↓
+Gemini keyframes
+        ↓
+Continuous transformation
+        ↓
+Final mint point
+        ↓
+Normal page continues
+
+That's the complete 12-step implementation.

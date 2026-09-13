@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { blogApi } from "../features/blog/services/blogApi";
 import { portfolioApi } from "../features/portfolio/services/portfolioApi";
 import { contactApi } from "../features/contact/services/contactApi";
+import { IdeaToProductExperience } from "../features/ideaToProduct";
 import type { ContentRecord } from "../types/content";
 import { LoadingState } from "../components/ui";
 import {
@@ -797,21 +798,13 @@ export function AboutPage() {
       </section>
       <section className="about-video" aria-labelledby="about-video-title">
         <div className="about-video__heading">
-          <h2 id="about-video-title">See How We Think About the Work</h2>
+          <h2 id="about-video-title">From Idea to Product</h2>
           <p>
-            A short introduction to how Upserve turns a clear requirement into a
-            working product.
+            Follow how Upserve turns a clear idea into a thoughtfully designed,
+            built and launched digital product.
           </p>
         </div>
-        <div className="about-video__frame">
-          <iframe
-            src="https://www.youtube.com/embed/aqz-KE-bpKQ"
-            title="Upserve company introduction"
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          />
-        </div>
+        <IdeaToProductExperience />
       </section>
       <section className="about-why" aria-labelledby="about-why-title">
         <div>
