@@ -7,6 +7,7 @@ export function useScrollProgress(elementRef: React.RefObject<HTMLElement | null
   const progressRef = useRef(0);
   const activeRef = useRef(false);
   const lockedScrollYRef = useRef(0);
+  const touchYRef = useRef<number | null>(null);
 
   useEffect(() => {
     const setDocumentScrollLock = (locked: boolean) => {
@@ -21,7 +22,7 @@ export function useScrollProgress(elementRef: React.RefObject<HTMLElement | null
       setProgress(next);
     };
 
-    const handleWheel = (event: WheelEvent) => {
+    const handleDelta = (deltaY: number, preventDefault: () => void) => {
       const element = elementRef.current;
       if (!element) return;
       const track = element.closest<HTMLElement>(".about-video") ?? element;
@@ -32,19 +33,19 @@ export function useScrollProgress(elementRef: React.RefObject<HTMLElement | null
         rect.top >= pinTop - pinTolerance &&
         rect.top <= pinTop + pinTolerance &&
         rect.bottom > pinTop;
-      const nextTopAfterWheel = rect.top - event.deltaY;
+      const nextTopAfterWheel = rect.top - deltaY;
       const crossesEntryForward =
-        event.deltaY > 0 && rect.top > pinTop && nextTopAfterWheel <= pinTop;
+        deltaY > 0 && rect.top > pinTop && nextTopAfterWheel <= pinTop;
       const crossesEntryReverse =
-        event.deltaY < 0 && rect.top < pinTop && nextTopAfterWheel >= pinTop;
+        deltaY < 0 && rect.top < pinTop && nextTopAfterWheel >= pinTop;
 
       if (!activeRef.current) {
         const entering =
-          event.deltaY > 0 &&
+          deltaY > 0 &&
           progressRef.current < 1 &&
           (sectionIsNearEntry || crossesEntryForward);
         const reversing =
-          event.deltaY < 0 &&
+          deltaY < 0 &&
           progressRef.current > 0 &&
           (sectionIsNearEntry || crossesEntryReverse);
         if (!entering && !reversing) return;
@@ -57,7 +58,7 @@ export function useScrollProgress(elementRef: React.RefObject<HTMLElement | null
         window.scrollTo(0, lockedScrollYRef.current);
       }
 
-      const movingForward = event.deltaY > 0;
+      const movingForward = deltaY > 0;
       const canMove = movingForward
         ? progressRef.current < 1
         : progressRef.current > 0;
@@ -68,8 +69,31 @@ export function useScrollProgress(elementRef: React.RefObject<HTMLElement | null
         return;
       }
 
-      event.preventDefault();
-      updateProgress(event.deltaY);
+      preventDefault();
+      updateProgress(deltaY);
+    };
+
+    const handleWheel = (event: WheelEvent) => {
+      handleDelta(event.deltaY, () => event.preventDefault());
+    };
+
+    const handleTouchStart = (event: TouchEvent) => {
+      touchYRef.current = event.touches[0]?.clientY ?? null;
+    };
+
+    const handleTouchMove = (event: TouchEvent) => {
+      const currentY = event.touches[0]?.clientY;
+      const previousY = touchYRef.current;
+      if (currentY === undefined || previousY === null || previousY === undefined) {
+        touchYRef.current = currentY ?? null;
+        return;
+      }
+
+      const deltaY = previousY - currentY;
+      touchYRef.current = currentY;
+      if (deltaY !== 0) {
+        handleDelta(deltaY, () => event.preventDefault());
+      }
     };
 
     const holdDocumentPosition = () => {
@@ -79,10 +103,14 @@ export function useScrollProgress(elementRef: React.RefObject<HTMLElement | null
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
     window.addEventListener("scroll", holdDocumentPosition, { passive: true });
 
     return () => {
       window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("scroll", holdDocumentPosition);
       setDocumentScrollLock(false);
     };
