@@ -4,6 +4,8 @@ import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { blogApi } from "../features/blog/services/blogApi";
 import { portfolioApi } from "../features/portfolio/services/portfolioApi";
 import { contactApi } from "../features/contact/services/contactApi";
+import { ApiError } from "../services/apiClient";
+import { IdeaToProductExperience } from "../features/ideaToProduct";
 import type { ContentRecord } from "../types/content";
 import { LoadingState } from "../components/ui";
 import {
@@ -797,21 +799,13 @@ export function AboutPage() {
       </section>
       <section className="about-video" aria-labelledby="about-video-title">
         <div className="about-video__heading">
-          <h2 id="about-video-title">See How We Think About the Work</h2>
+          <h2 id="about-video-title">From Idea to Product</h2>
           <p>
-            A short introduction to how Upserve turns a clear requirement into a
-            working product.
+            Follow how Upserve turns a clear idea into a thoughtfully designed,
+            built and launched digital product.
           </p>
         </div>
-        <div className="about-video__frame">
-          <iframe
-            src="https://www.youtube.com/embed/aqz-KE-bpKQ"
-            title="Upserve company introduction"
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          />
-        </div>
+        <IdeaToProductExperience />
       </section>
       <section className="about-why" aria-labelledby="about-why-title">
         <div>
@@ -901,7 +895,11 @@ export function ContactPage() {
       setState("success");
     } catch (error) {
       setState(
-        error instanceof Error ? error.message : "Unable to send your message.",
+        error instanceof ApiError && error.status === 429
+          ? "Too many enquiries from this connection. Please wait a little and try again."
+          : error instanceof Error
+            ? error.message
+            : "Unable to send your message.",
       );
     } finally {
       setBusy(false);
@@ -915,12 +913,12 @@ export function ContactPage() {
           <h1>Ready to Start Your Project?</h1>
           <p>
             Tell us what you're working on, what's getting in the way, and where
-            you want to go.
+            you want to go, or email us directly.
           </p>
           <div className="contact-details">
-            <a href="mailto:tnmy4903@gmail.com">
+            <a href="mailto:contact@upserve.in">
               <span>Email</span>
-              <strong>tnmy4903@gmail.com</strong>
+              <strong>contact@upserve.in</strong>
             </a>
             <a href="tel:+918858314903">
               <span>Phone</span>

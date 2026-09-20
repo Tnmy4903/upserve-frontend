@@ -149,7 +149,10 @@
 .about-why h2 { max-width: 32rem; margin: .5rem 0 0; }
 .about-why > p { max-width: 42rem; margin: 1rem 0 0; color: var(--fc-muted); line-height: 1.75; }
 @media (max-width: 760px) { .about-why { grid-template-columns: 1fr; gap: 1rem; } .about-why > p { margin-top: 0; } }
-.about-video { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); gap: clamp(2rem, 7vw, 6rem); align-items: center; margin: 5rem 0; }
+.about-video { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); gap: clamp(2rem, 7vw, 6rem); align-items: start; margin: 5rem 0; }
+.about-video__heading { grid-column: 1; }
+.about-video > .idea-to-product-track { grid-column: 2; }
+.about-video__heading { position: relative; }
 .about-video__heading h2 { max-width: 28rem; margin: .5rem 0 1rem; font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.08; letter-spacing: -.04em; }
 .about-video__heading > p:last-child { max-width: 28rem; color: var(--fc-muted); line-height: 1.7; }
 .about-video__frame { overflow: hidden; aspect-ratio: 16 / 9; border: 1px solid var(--fc-border-strong); border-radius: var(--fc-radius-card); background: var(--fc-surface); box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, .2); }
@@ -157,7 +160,7 @@
 .about-expectations__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .about-expectations__grid > div { min-height: auto; display: flex; align-items: center; gap: .8rem; }
 .about-expectations__grid strong { color: var(--fc-text); }
-@media (max-width: 760px) { .services-detail-grid, .showcase-annotations, .about-approach__grid { grid-template-columns: 1fr; } .about-statement, .about-platform, .about-founder, .about-video { grid-template-columns: 1fr; gap: 1rem; } .about-founder__media { grid-template-columns: minmax(0, 12rem) minmax(0, 1fr); gap: 1rem; align-items: center; } .about-founder__portrait { align-self: auto; width: 100%; min-height: auto; aspect-ratio: 832 / 902; } .about-founder__identity { align-items: start; flex-direction: column; padding-top: 0; border-top: 0; } .about-founder__identity div { gap: .35rem; } .founder-linkedin { max-width: 100%; } .about-expectations__grid { grid-template-columns: 1fr; } .showcase-frame__body { min-height: 240px; padding: 2rem 1rem; } }
+@media (max-width: 760px) { .services-detail-grid, .showcase-annotations, .about-approach__grid { grid-template-columns: 1fr; } .about-statement, .about-platform, .about-founder, .about-video { grid-template-columns: 1fr; gap: 1rem; } .about-video { margin-bottom: 0; } .about-video__heading, .about-video > .idea-to-product-track { grid-column: 1; } .about-video__heading { position: relative; top: auto; } .about-founder__media { grid-template-columns: minmax(0, 12rem) minmax(0, 1fr); gap: 1rem; align-items: center; } .about-founder__portrait { align-self: auto; width: 100%; min-height: auto; aspect-ratio: 832 / 902; } .about-founder__identity { align-items: start; flex-direction: column; padding-top: 0; border-top: 0; } .about-founder__identity div { gap: .35rem; } .founder-linkedin { max-width: 100%; } .about-expectations__grid { grid-template-columns: 1fr; } .showcase-frame__body { min-height: 240px; padding: 2rem 1rem; } }
 
 @media (max-width: 760px) {
   .founder-linkedin { width: 4.25rem; min-height: 2.75rem; padding: .5rem .65rem; justify-content: space-between; }
